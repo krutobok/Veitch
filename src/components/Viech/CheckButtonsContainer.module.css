@@ -1,0 +1,26 @@
+.buttonContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  flex-basis: 270px;
+  align-content: flex-start;
+}
+.containerTitle {
+  margin-bottom: 20px;
+}
+@media (max-width: 910px) {
+  .buttonContainer {
+    flex-basis: auto;
+    margin-bottom: 10px;
+    justify-content: space-around;
+  }
+  .containerTitle {
+    flex-basis: 100%;
+  }
+}
+@media (max-width: 640px) {
+  .containerTitle {
+    margin-bottom: 10px;
+    font-size: 1em;
+  }
+}

@@ -1,0 +1,33 @@
+.button.active {
+  background-color: green;
+}
+.button {
+  height: 50px;
+  cursor: pointer;
+  background-color: beige;
+  font-size: 1.5rem;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+}
+.button:hover {
+  background-color: rgb(240, 240, 155);
+}
+.button.active:hover {
+  background-color: lightgreen;
+}
+@media (max-width: 640px) {
+  .button {
+    zoom: 70%;
+  }
+}
+@media (max-width: 460px) {
+  .button {
+    zoom: 60%;
+  }
+}
+@media (max-width: 340px) {
+  .button {
+    zoom: 50%;
+  }
+}

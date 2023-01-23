@@ -69,11 +69,33 @@ function App() {
           }
           return cellArr
         }
-        const cellArrayCheckerWrapper = (statment, elements) => {
+        const cellArrayCheckerWrapper = ({ statment, elements }) => {
           if (statment) {
             const result = cellArrayChecker(elements)
             if (result) {
               acum.push(result)
+            }
+          }
+        }
+        const cellCheckerWrapper = ({ statment, functionName, cellArr }) => {
+          if (statment) {
+            const result = cellArr.reduce(
+              (cellObj, arg, index) => {
+                if (index === 0 || cellObj.isInclude) {
+                  const data = functionName(arg.start, arg.end)
+                  if (data) {
+                    cellObj.arr = cellObj.arr.concat(data)
+                    cellObj.isInclude = true
+                  } else {
+                    cellObj.isInclude = false
+                  }
+                }
+                return cellObj
+              },
+              { isInclude: false, arr: [] }
+            )
+            if (result?.isInclude) {
+              acum.push(result.arr)
             }
           }
         }
@@ -85,97 +107,114 @@ function App() {
           acum = [arr]
           return acum
         }
-        if (newCellDate.length > index + 7 && button.id % SIZE === 0) {
-          const result = cellChecker(index, index + 7)
-          if (result) {
-            acum.push(result)
-          }
-        }
-        if (index < SIZE - 1) {
-          const result1 = cellCheckerVertically(index, 4)
-          const result2 = cellCheckerVertically(index + 1, 4)
-          if (result1 && result2) {
-            acum.push(result1.concat(result2))
-          }
-        }
-        if (index === SIZE - 1) {
-          const result1 = cellCheckerVertically(index, 4)
-          const result2 = cellCheckerVertically(0, 4)
-          if (result1 && result2) {
-            acum.push(result1.concat(result2))
-          }
-        }
-        if (index < SIZE) {
-          const result = cellCheckerVertically(index, 4)
-          if (result) {
-            acum.push(result)
-          }
-        }
-        if (newCellDate.length === index + SIZE && button.id % SIZE === 0) {
-          const result1 = cellChecker(index, index + SIZE - 1)
-          const result2 = cellChecker(0, SIZE - 1)
-          if (result1 && result2) {
-            acum.push(result1.concat(result2))
-          }
-        }
-        if (newCellDate.length > index + 3 && button.id % SIZE === 0) {
-          const result = cellChecker(index, index + 3)
+        const cellDataArray = [
+          {
+            statment: newCellDate.length > index + 7 && button.id % SIZE === 0,
+            functionName: cellChecker,
+            cellArr: [{ start: index, end: index + 7 }],
+          },
+          {
+            statment: index < SIZE - 1,
+            functionName: cellCheckerVertically,
+            cellArr: [
+              { start: index, end: 4 },
+              { start: index + 1, end: 4 },
+            ],
+          },
+          {
+            statment: index === SIZE - 1,
+            functionName: cellCheckerVertically,
+            cellArr: [
+              { start: index, end: 4 },
+              { start: 0, end: 4 },
+            ],
+          },
+          {
+            statment: index < SIZE,
+            functionName: cellCheckerVertically,
+            cellArr: [
+              {
+                start: index,
+                end: 4,
+              },
+            ],
+          },
+          {
+            statment:
+              newCellDate.length === index + SIZE && button.id % SIZE === 0,
+            functionName: cellChecker,
+            cellArr: [
+              { start: index, end: index + SIZE - 1 },
+              { start: 0, end: SIZE - 1 },
+            ],
+          },
+          {
+            statment: newCellDate.length > index + 3 && button.id % SIZE === 0,
+            functionName: cellChecker,
+            cellArr: [{ start: index, end: index + 3 }],
+          },
+          {
+            statment: index < SIZE * (SIZE - 1) && (index + 1) % SIZE === 0,
+            functionName: cellCheckerVertically,
+            cellArr: [
+              { start: index, end: 2 },
+              { start: index - SIZE + 1, end: 2 },
+            ],
+          },
+          {
+            statment: index < SIZE * (SIZE - 1) - 1 && (index + 1) % SIZE !== 0,
+            functionName: cellCheckerVertically,
+            cellArr: [
+              { start: index, end: 2 },
+              { start: index + 1, end: 2 },
+            ],
+          },
+          {
+            statment: index < SIZE * (SIZE - 1),
+            functionName: cellCheckerVertically,
+            cellArr: [{ start: index, end: 2 }],
+          },
 
-          if (result) {
-            acum.push(result)
-          }
+          {
+            statment:
+              newCellDate.length !== index + 1 && (button.id + 1) % SIZE !== 0,
+            functionName: cellChecker,
+            cellArr: [{ start: index, end: index + 1 }],
+          },
+        ]
+        const cellArrayCheckerArray = [
+          {
+            statment: index === newCellDate.length - 1,
+            elements: [index, SIZE - 1, index - SIZE + 1, 0],
+          },
+          {
+            statment:
+              index >= SIZE * (SIZE - 1) && index !== newCellDate.length - 1,
+            elements: [
+              index,
+              index - SIZE * (SIZE - 1),
+              index + 1,
+              index - SIZE * (SIZE - 1) + 1,
+            ],
+          },
+          {
+            statment: index >= SIZE * (SIZE - 1),
+            elements: [index, index - SIZE * (SIZE - 1)],
+          },
+          {
+            statment: (index + 1) % SIZE === 0,
+            elements: [index, index - SIZE + 1],
+          },
+          {
+            statment: true,
+            elements: [index],
+          },
+        ]
+        function cellInit(cellWrapperArr, cellArrayCheckerArr) {
+          cellWrapperArr.forEach((el) => cellCheckerWrapper(el))
+          cellArrayCheckerArr.forEach((el) => cellArrayCheckerWrapper(el))
         }
-        if (index < SIZE * (SIZE - 1) && (index + 1) % SIZE === 0) {
-          const result1 = cellCheckerVertically(index, 2)
-          const result2 = cellCheckerVertically(index - SIZE + 1, 2)
-          if (result1 && result2) {
-            acum.push(result1.concat(result2))
-          }
-        }
-        if (index < SIZE * (SIZE - 1) - 1 && (index + 1) % SIZE !== 0) {
-          const result1 = cellCheckerVertically(index, 2)
-          const result2 = cellCheckerVertically(index + 1, 2)
-          if (result1 && result2) {
-            acum.push(result1.concat(result2))
-          }
-        }
-        if (index < SIZE * (SIZE - 1)) {
-          const result = cellCheckerVertically(index, 2)
-          if (result) {
-            acum.push(result)
-          }
-        }
-        if (newCellDate.length !== index + 1 && (button.id + 1) % SIZE !== 0) {
-          const result = cellChecker(index, index + 1)
-          if (result) {
-            acum.push(result)
-          }
-        }
-        cellArrayCheckerWrapper(index === newCellDate.length - 1, [
-          index,
-          SIZE - 1,
-          index - SIZE + 1,
-          0,
-        ])
-
-        cellArrayCheckerWrapper(
-          index >= SIZE * (SIZE - 1) && index !== newCellDate.length - 1,
-          [
-            index,
-            index - SIZE * (SIZE - 1),
-            index + 1,
-            index - SIZE * (SIZE - 1) + 1,
-          ]
-        )
-        cellArrayCheckerWrapper(index >= SIZE * (SIZE - 1), [
-          index,
-          index - SIZE * (SIZE - 1),
-        ])
-        cellArrayCheckerWrapper((index + 1) % SIZE === 0, [
-          index,
-          index - SIZE + 1,
-        ])
-        cellArrayCheckerWrapper(true, [index])
+        cellInit(cellDataArray, cellArrayCheckerArray)
         return acum
       }, [])
       .sort((a, b) => b.length - a.length)
@@ -390,7 +429,7 @@ function App() {
         buttons={buttons}
       />
       <Table borders={borders} combinations={combinations} buttons={cellData} />
-      <Result combinations={combinations} lenght={combinations.length} />
+      <Result combinations={combinations} />
     </div>
   )
 }

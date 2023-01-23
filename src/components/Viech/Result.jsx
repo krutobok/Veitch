@@ -2,7 +2,7 @@ import styles from './Result.module.css'
 import keysForResult from '../../data/keysForResult'
 import Answer from './Answer'
 
-const Result = ({ combinations, lenght }) => {
+const Result = ({ combinations }) => {
   const generateNods = combinations.map((comb, index) => {
     const elems = keysForResult.reduce((acum, key, keyIndex) => {
       const result = comb.reduce(
@@ -37,17 +37,18 @@ const Result = ({ combinations, lenght }) => {
         )
       }
     }
-    if (index !== lenght - 1) {
+    if (index !== combinations.length - 1) {
       nods.push(' v ')
     }
 
     return nods
   })
-  console.log(generateNods.flat())
   return (
     <div className={styles.result}>
       {`Відповідь: `}
-      {lenght === 1 && generateNods.flat().length === 0 ? '1' : generateNods}
+      {combinations.length === 1 && generateNods.flat().length === 0
+        ? '1'
+        : generateNods}
     </div>
   )
 }
